@@ -185,6 +185,13 @@ section{scroll-margin-top:70px}
 .seg input:focus-visible + label{outline:3px solid var(--accent);outline-offset:2px}
 .fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .fields .full{grid-column:1/-1}
+.seg.paym{margin-top:-4px}
+.seg.paym[hidden]{display:none}
+.line.cod{color:var(--accent);font-weight:700}
+.line.cod[hidden]{display:none}
+.pay-card.cod{grid-column:1/-1;background:var(--surface);border:2px dashed var(--orange)}
+.pay-card.cod h3{color:var(--head)}
+.pay-card.cod .steps{display:grid;gap:8px;padding-inline-start:20px;font-weight:600}
 .fields label{display:grid;gap:6px;font-weight:700;font-size:.92rem;min-width:0}
 .fields input,.fields textarea{font:inherit;font-weight:500;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:11px 14px;width:100%;transition:border-color .2s, box-shadow .2s}
 .fields input:focus,.fields textarea:focus{outline:none;border-color:var(--olive);box-shadow:0 0 0 4px color-mix(in srgb,var(--olive) 22%,transparent)}
@@ -400,6 +407,12 @@ footer .copy-line{grid-column:1/-1;border-top:1px solid rgba(244,236,220,.18);pa
             <input type="radio" name="region" id="rGCC" value="gcc">
             <label for="rGCC">دول الخليج<small>بر أو جو · السعر عند التأكيد</small></label>
           </div>
+          <div class="seg paym" id="paySeg" role="radiogroup" aria-label="طريقة الدفع">
+            <input type="radio" name="paym" id="pNow" value="now" checked>
+            <label for="pNow">ادفع الحين<small>بنفت باي أو الباركود</small></label>
+            <input type="radio" name="paym" id="pCod" value="cod">
+            <label for="pCod">الدفع عند الاستلام<small>عربون 1 د.ب لتأكيد الطلب</small></label>
+          </div>
           <div class="fields">
             <label for="name">الاسم<input id="name" autocomplete="name" placeholder="مثال: أبو محمد"></label>
             <label for="area" id="areaLbl">المنطقة<input id="area" placeholder="مثال: الرفاع"></label>
@@ -408,7 +421,9 @@ footer .copy-line{grid-column:1/-1;border-top:1px solid rgba(244,236,220,.18);pa
           <div class="summary" aria-live="polite">
             <div class="line"><span id="sumItems">1 × كيس 500 غ</span><span id="sumSub">3.800 د.ب</span></div>
             <div class="line"><span>التوصيل</span><span id="sumShip">1.000 د.ب</span></div>
-            <div class="total"><b>المجموع</b><strong id="sumTotal">4.850 د.ب</strong></div>
+            <div class="total"><b>المجموع</b><strong id="sumTotal">4.800 د.ب</strong></div>
+            <div class="line cod" id="codDep" hidden><span id="codDepL">عربون التأكيد (يدفع الحين)</span><span id="codDepV">1.000 د.ب</span></div>
+            <div class="line cod" id="codRest" hidden><span id="codRestL">الباقي عند الاستلام</span><span id="codRestV">3.800 د.ب</span></div>
             <p class="hint" id="payHint">الدفع: بنفت باي على 38908424 أو الباركود.</p>
           </div>
           <button class="btn btn-wa" type="submit"><svg class="wa-ico"><use href="#wa"/></svg>أرسل الطلب على واتساب</button>
@@ -464,6 +479,15 @@ footer .copy-line{grid-column:1/-1;border-top:1px solid rgba(244,236,220,.18);pa
             <span class="v">ABCOBHBMXXX</span>
             <button class="copy" type="button" data-copy="ABCOBHBMXXX">نسخ السويفت</button>
           </div>
+        </div>
+        <div class="pay-card cod rv">
+          <h3>الدفع عند الاستلام (داخل البحرين)</h3>
+          <p class="who">تبي تدفع لين يوصلك الطلب؟ ولا يهمك.</p>
+          <ol class="steps">
+            <li>حوّل دينار واحد عربون على بنفت باي 38908424 لتأكيد الطلب.</li>
+            <li>أرسل لنا صورة الإيصال على الواتساب.</li>
+            <li>ادفع الباقي للمندوب لين يوصلك الطلب.</li>
+          </ol>
         </div>
       </div>
       <div class="pay-foot rv">
@@ -529,17 +553,18 @@ if(location.hash){try{history.replaceState(null,'',location.pathname+location.se
 window.scrollTo(0,0);window.addEventListener('load',function(){window.scrollTo(0,0)});
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href^="#"]');if(!a)return;var id=a.getAttribute('href').slice(1);var el=id?document.getElementById(id):null;if(!el)return;e.preventDefault();el.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})});
 (function(){
-  var EN={"الخلطة": "The blend", "اطلب الحين": "Order now", "الدفع": "Payment", "التوصيل": "Delivery", "واتساب": "WhatsApp", "استكانة شاي": "A cup of tea", "تعدّل يومك": "that makes your day", "خلطة شايا الفاخرة من البحرين. شاي أسام CTC طازج بنكهات طبيعية ولمسة فانيلا، لونه قوي وطعمه يونّس.": "Chaya Premium Blend from Bahrain. Fresh Assam CTC tea with natural flavours and a touch of vanilla: rich colour, full flavour.", "د.ب · كيس 500 غرام": "BHD · 500 g bag", "اطلب على واتساب": "Order on WhatsApp", "تعرّف على الخلطة": "Discover the blend", "شاي أسام CTC": "Assam CTC tea", "توصيل باچر في البحرين": "Next-day delivery in Bahrain", "شنو داخل الكيس؟": "What's inside the bag?", "خلطة متوازنة تنفع للشاي الحليب والكرك والشاي الأحمر، من الصبح لين الليل.": "A balanced blend for milk tea, karak and plain black tea, from morning to night.", "شاي أسام CTC طازج": "Fresh Assam CTC", "حبيبات CTC تعطيك لون قوي وقوام ثقيل من أول غلية.": "CTC granules give a strong colour and full body from the first boil.", "ممزوج بشاي منكّه": "Blended with flavoured tea", "مزيج مع شاي شايا بايونير وشاي منكّه بنكهات طبيعية.": "Mixed with Chaya Pioneer tea and naturally flavoured tea.", "لمسة فانيلا": "A touch of vanilla", "نكهة فانيلا طبيعية خفيفة بنسبة 0.05% تخلي الريحة تفوح في البيت.": "A light 0.05% natural vanilla flavour that fills the house with aroma.", "الوزن الصافي:": "Net weight:", "500 غ": "500 g", "النوع:": "Type:", "المنشأ:": "Origin:", "شاي أسام": "Assam tea", "البراند:": "Brand:", "Chaya Tea · البحرين": "Chaya Tea · Bahrain", "اطلب كيسك الحين": "Order your bag now", "اختار الكمية ومكان التوصيل، وإحنا نجهز لك رسالة الطلب كاملة على واتساب.": "Choose the quantity and delivery area, and we'll prepare your full order message on WhatsApp.", "الأكثر طلباً": "Best seller", "خلطة شايا الفاخرة": "Chaya Premium Blend", "كيس 500 غرام · 3.800 د.ب": "500 g bag · 3.800 BHD", "الكمية": "Quantity", "داخل البحرين": "Inside Bahrain", "توصيل باچر · 1.000 د.ب": "Next day · 1.000 BHD", "دول الخليج": "GCC countries", "بر أو جو · السعر عند التأكيد": "Land or air · price on confirmation", "الاسم": "Name", "المنطقة": "Area", "العنوان أو ملاحظة": "Address or note", "المجموع": "Total", "أرسل الطلب على واتساب": "Send order on WhatsApp", "يفتح لك واتساب برسالة جاهزة. إذا ما فتح، راسلنا على": "WhatsApp opens with a ready message. If it doesn't, message us at", "ثلاث خطوات وبس": "Just three steps", "اختار الكمية": "Pick a quantity", "حدد كم كيس تبي ووين نوصلك.": "Choose how many bags and where to deliver.", "الرسالة توصلنا جاهزة بكل التفاصيل والمجموع.": "Your message reaches us with all the details and the total.", "ادفع واستلم": "Pay and receive", "حوّل المبلغ وأرسل صورة الإيصال، ويوصلك الكيس باچر داخل البحرين.": "Transfer the amount, send the receipt, and your bag arrives the next day in Bahrain.", "طرق الدفع": "Payment methods", "ادفع بالطريقة اللي تناسبك، وبعدها أرسل لنا صورة الإيصال على الواتساب.": "Pay the way that suits you, then send us the receipt on WhatsApp.", "داخل البحرين: BenefitPay": "Inside Bahrain: BenefitPay", "امسح الباركود أو حوّل على رقم الموبايل": "Scan the QR code or transfer to the mobile number", "نسخ الرقم": "Copy number", "من خارج البحرين: تحويل بنكي": "Outside Bahrain: bank transfer", "نسخ الآيبان": "Copy IBAN", "نسخ السويفت": "Copy SWIFT", "خلصت الدفع؟ أرسل لنا صورة الإيصال ونأكد طلبك على طول.": "Paid? Send us the receipt and we'll confirm your order right away.", "أرسل الإيصال": "Send receipt", "نوصلك وين ما كنت": "We deliver wherever you are", "داخل مملكة البحرين": "Kingdom of Bahrain", "د.ب": "BHD", "اطلب اليوم ويوصلك باچر لين باب البيت.": "Order today and get it at your door tomorrow.", "لجميع مناطق البحرين. اطلب اليوم ويوصلك باچر لين باب البيت.": "All areas of Bahrain. Order today and get it at your door tomorrow.", "بر أو جو": "Land or air", "نشحن للسعودية والكويت والإمارات وقطر وعمان. تكلفة الشحن نعطيك إياها على واتساب حسب المدينة والطريقة.": "We ship to Saudi Arabia, Kuwait, the UAE, Qatar and Oman. We'll quote shipping on WhatsApp based on your city and method.", "تواصل معنا": "Contact us", "واتساب:": "WhatsApp:", "كتالوج واتساب": "WhatsApp catalog", "إنستقرام:": "Instagram:", "تسوّق": "Shop", "شايا تي · مملكة البحرين": "Chaya Tea · Kingdom of Bahrain", "شايا تي": "Chaya Tea", "أقسام الموقع": "Site sections", "كيس شاي شايا الفاخر 500 غرام": "Chaya Premium Blend tea, 500 g bag", "نقّص كيس": "One less bag", "زيد كيس": "One more bag", "مكان التوصيل": "Delivery area", "مثال: أبو محمد": "e.g. Mohammed", "مثال: الرفاع": "e.g. Riffa", "رقم البيت، الطريق، المجمع… (اختياري)": "House, road, block… (optional)", "باركود بنفت باي لشايا تي": "Chaya Tea BenefitPay QR code", "راسلنا على واتساب": "Message us on WhatsApp"};
-  var PRICE=3.8, SHIP_BH=1.0, WA='97338908424';
+  var EN={"الخلطة": "The blend", "اطلب الحين": "Order now", "الدفع": "Payment", "التوصيل": "Delivery", "واتساب": "WhatsApp", "استكانة شاي": "A cup of tea", "تعدّل يومك": "that makes your day", "خلطة شايا الفاخرة من البحرين. شاي أسام CTC طازج بنكهات طبيعية ولمسة فانيلا، لونه قوي وطعمه يونّس.": "Chaya Premium Blend from Bahrain. Fresh Assam CTC tea with natural flavours and a touch of vanilla: rich colour, full flavour.", "د.ب · كيس 500 غرام": "BHD · 500 g bag", "اطلب على واتساب": "Order on WhatsApp", "تعرّف على الخلطة": "Discover the blend", "شاي أسام CTC": "Assam CTC tea", "توصيل باچر في البحرين": "Next-day delivery in Bahrain", "شنو داخل الكيس؟": "What's inside the bag?", "خلطة متوازنة تنفع للشاي الحليب والكرك والشاي الأحمر، من الصبح لين الليل.": "A balanced blend for milk tea, karak and plain black tea, from morning to night.", "شاي أسام CTC طازج": "Fresh Assam CTC", "حبيبات CTC تعطيك لون قوي وقوام ثقيل من أول غلية.": "CTC granules give a strong colour and full body from the first boil.", "ممزوج بشاي منكّه": "Blended with flavoured tea", "مزيج مع شاي شايا بايونير وشاي منكّه بنكهات طبيعية.": "Mixed with Chaya Pioneer tea and naturally flavoured tea.", "لمسة فانيلا": "A touch of vanilla", "نكهة فانيلا طبيعية خفيفة بنسبة 0.05% تخلي الريحة تفوح في البيت.": "A light 0.05% natural vanilla flavour that fills the house with aroma.", "الوزن الصافي:": "Net weight:", "500 غ": "500 g", "النوع:": "Type:", "المنشأ:": "Origin:", "شاي أسام": "Assam tea", "البراند:": "Brand:", "Chaya Tea · البحرين": "Chaya Tea · Bahrain", "اطلب كيسك الحين": "Order your bag now", "اختار الكمية ومكان التوصيل، وإحنا نجهز لك رسالة الطلب كاملة على واتساب.": "Choose the quantity and delivery area, and we'll prepare your full order message on WhatsApp.", "الأكثر طلباً": "Best seller", "خلطة شايا الفاخرة": "Chaya Premium Blend", "كيس 500 غرام · 3.800 د.ب": "500 g bag · 3.800 BHD", "الكمية": "Quantity", "داخل البحرين": "Inside Bahrain", "توصيل باچر · 1.000 د.ب": "Next day · 1.000 BHD", "دول الخليج": "GCC countries", "بر أو جو · السعر عند التأكيد": "Land or air · price on confirmation", "الاسم": "Name", "المنطقة": "Area", "العنوان أو ملاحظة": "Address or note", "المجموع": "Total", "أرسل الطلب على واتساب": "Send order on WhatsApp", "يفتح لك واتساب برسالة جاهزة. إذا ما فتح، راسلنا على": "WhatsApp opens with a ready message. If it doesn't, message us at", "ثلاث خطوات وبس": "Just three steps", "اختار الكمية": "Pick a quantity", "حدد كم كيس تبي ووين نوصلك.": "Choose how many bags and where to deliver.", "الرسالة توصلنا جاهزة بكل التفاصيل والمجموع.": "Your message reaches us with all the details and the total.", "ادفع واستلم": "Pay and receive", "حوّل المبلغ وأرسل صورة الإيصال، ويوصلك الكيس باچر داخل البحرين.": "Transfer the amount, send the receipt, and your bag arrives the next day in Bahrain.", "طرق الدفع": "Payment methods", "ادفع بالطريقة اللي تناسبك، وبعدها أرسل لنا صورة الإيصال على الواتساب.": "Pay the way that suits you, then send us the receipt on WhatsApp.", "داخل البحرين: BenefitPay": "Inside Bahrain: BenefitPay", "امسح الباركود أو حوّل على رقم الموبايل": "Scan the QR code or transfer to the mobile number", "نسخ الرقم": "Copy number", "من خارج البحرين: تحويل بنكي": "Outside Bahrain: bank transfer", "نسخ الآيبان": "Copy IBAN", "نسخ السويفت": "Copy SWIFT", "خلصت الدفع؟ أرسل لنا صورة الإيصال ونأكد طلبك على طول.": "Paid? Send us the receipt and we'll confirm your order right away.", "أرسل الإيصال": "Send receipt", "نوصلك وين ما كنت": "We deliver wherever you are", "داخل مملكة البحرين": "Kingdom of Bahrain", "د.ب": "BHD", "اطلب اليوم ويوصلك باچر لين باب البيت.": "Order today and get it at your door tomorrow.", "لجميع مناطق البحرين. اطلب اليوم ويوصلك باچر لين باب البيت.": "All areas of Bahrain. Order today and get it at your door tomorrow.", "بر أو جو": "Land or air", "نشحن للسعودية والكويت والإمارات وقطر وعمان. تكلفة الشحن نعطيك إياها على واتساب حسب المدينة والطريقة.": "We ship to Saudi Arabia, Kuwait, the UAE, Qatar and Oman. We'll quote shipping on WhatsApp based on your city and method.", "تواصل معنا": "Contact us", "واتساب:": "WhatsApp:", "كتالوج واتساب": "WhatsApp catalog", "إنستقرام:": "Instagram:", "تسوّق": "Shop", "شايا تي · مملكة البحرين": "Chaya Tea · Kingdom of Bahrain", "شايا تي": "Chaya Tea", "أقسام الموقع": "Site sections", "كيس شاي شايا الفاخر 500 غرام": "Chaya Premium Blend tea, 500 g bag", "نقّص كيس": "One less bag", "زيد كيس": "One more bag", "مكان التوصيل": "Delivery area", "مثال: أبو محمد": "e.g. Mohammed", "مثال: الرفاع": "e.g. Riffa", "رقم البيت، الطريق، المجمع… (اختياري)": "House, road, block… (optional)", "باركود بنفت باي لشايا تي": "Chaya Tea BenefitPay QR code", "راسلنا على واتساب": "Message us on WhatsApp", "طريقة الدفع": "Payment method", "ادفع الحين": "Pay now", "بنفت باي أو الباركود": "BenefitPay or QR code", "الدفع عند الاستلام": "Cash on delivery", "عربون 1 د.ب لتأكيد الطلب": "1 BHD deposit to confirm", "الدفع عند الاستلام (داخل البحرين)": "Cash on delivery (inside Bahrain)", "تبي تدفع لين يوصلك الطلب؟ ولا يهمك.": "Prefer to pay when your order arrives? No problem.", "حوّل دينار واحد عربون على بنفت باي 38908424 لتأكيد الطلب.": "Send a 1 BHD deposit by BenefitPay to 38908424 to confirm your order.", "أرسل لنا صورة الإيصال على الواتساب.": "Send us the receipt on WhatsApp.", "ادفع الباقي للمندوب لين يوصلك الطلب.": "Pay the rest to the driver when your order arrives.", "عربون التأكيد (يدفع الحين)": "Deposit to confirm (pay now)", "الباقي عند الاستلام": "Rest on delivery"};
+  var PRICE=3.8, SHIP_BH=1.0, DEP=1.0, WA='97338908424';
   var qty=1, lang='ar';
   var $=function(id){return document.getElementById(id)};
   var T={
-    ar:{cur:'د.ب',bag:'كيس 500 غ',ship:'يُحدد على واتساب',plus:' + الشحن',payBH:'الدفع: بنفت باي على 38908424 أو الباركود.',payGCC:'الدفع: تحويل بنكي على الآيبان بعد ما نأكد لك سعر الشحن.',area:'المنطقة',areaG:'الدولة والمدينة',phA:'مثال: الرفاع',phG:'مثال: الرياض، السعودية',toast:'جهزنا رسالة الطلب في واتساب',copied:'تم النسخ: ',copiedBtn:'تم النسخ ✓',sel:'الرقم محدد، انسخه يدوياً',
+    ar:{cur:'د.ب',bag:'كيس 500 غ',ship:'يُحدد على واتساب',plus:' + الشحن',payBH:'الدفع: بنفت باي على 38908424 أو الباركود.',payCOD:'الدفع عند الاستلام: حوّل دينار واحد عربون على بنفت باي 38908424 لتأكيد الطلب، والباقي تدفعه للمندوب.',codMsg:'الدفع عند الاستلام (عربون 1 د.ب لتأكيد الطلب، والباقي عند الاستلام: ',payGCC:'الدفع: تحويل بنكي على الآيبان بعد ما نأكد لك سعر الشحن.',area:'المنطقة',areaG:'الدولة والمدينة',phA:'مثال: الرفاع',phG:'مثال: الرياض، السعودية',toast:'جهزنا رسالة الطلب في واتساب',copied:'تم النسخ: ',copiedBtn:'تم النسخ ✓',sel:'الرقم محدد، انسخه يدوياً',
       msg:['السلام عليكم، أبي أطلب من شايا تي:','خلطة شايا الفاخرة 500 غ','التوصيل: ','داخل البحرين (باچر)','دول الخليج','المجموع: ',' (شامل التوصيل)','الاسم: ','المنطقة','الدولة/المدينة','العنوان/ملاحظة: ','الدفع: ','بنفت باي','تحويل بنكي'],btn:'EN',btnLbl:'English'},
-    en:{cur:'BHD',bag:'500 g bag',ship:'Quoted on WhatsApp',plus:' + shipping',payBH:'Payment: BenefitPay to 38908424 or the QR code.',payGCC:'Payment: bank transfer to the IBAN once we confirm shipping.',area:'Area',areaG:'Country and city',phA:'e.g. Riffa',phG:'e.g. Riyadh, Saudi Arabia',toast:'Your order message is ready in WhatsApp',copied:'Copied: ',copiedBtn:'Copied ✓',sel:'Selected, copy it manually',
+    en:{cur:'BHD',bag:'500 g bag',ship:'Quoted on WhatsApp',plus:' + shipping',payBH:'Payment: BenefitPay to 38908424 or the QR code.',payCOD:'Cash on delivery: send a 1 BHD deposit by BenefitPay to 38908424 to confirm, and pay the rest to the driver.',codMsg:'Cash on delivery (1 BHD deposit to confirm, rest on delivery: ',payGCC:'Payment: bank transfer to the IBAN once we confirm shipping.',area:'Area',areaG:'Country and city',phA:'e.g. Riffa',phG:'e.g. Riyadh, Saudi Arabia',toast:'Your order message is ready in WhatsApp',copied:'Copied: ',copiedBtn:'Copied ✓',sel:'Selected, copy it manually',
       msg:['Hello, I would like to order from Chaya Tea:','Chaya Premium Blend 500 g','Delivery: ','Inside Bahrain (next day)','GCC','Total: ',' (incl. delivery)','Name: ','Area','Country/City','Address/Note: ','Payment: ','BenefitPay','Bank transfer'],btn:'ع',btnLbl:'العربية'}
   };
   var fmt=function(n){return n.toFixed(3)+' '+T[lang].cur};
+  function cod(){return region()==='bh'&&$('pCod').checked}
   function region(){return document.querySelector('input[name="region"]:checked').value}
   function render(bump){
     var L=T[lang], sub=qty*PRICE, bh=region()==='bh';
@@ -548,7 +573,9 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
     $('sumSub').textContent=fmt(sub);
     $('sumShip').textContent=bh?fmt(SHIP_BH):L.ship;
     $('sumTotal').textContent=bh?fmt(sub+SHIP_BH):fmt(sub)+L.plus;
-    $('payHint').textContent=bh?L.payBH:L.payGCC;
+    var c=cod(); $('paySeg').hidden=!bh; $('codDep').hidden=!c; $('codRest').hidden=!c;
+    $('codDepV').textContent=fmt(DEP); $('codRestV').textContent=fmt(sub+SHIP_BH-DEP);
+    $('payHint').textContent=bh?(c?L.payCOD:L.payBH):L.payGCC;
     $('areaLbl').firstChild.nodeValue=bh?L.area:L.areaG;
     $('area').placeholder=bh?L.phA:L.phG;
     if(bump){[$('qty'),$('sumTotal')].forEach(function(el){el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop')})}
@@ -574,7 +601,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
   $('langBtn').addEventListener('click',function(){setLang(lang==='ar'?'en':'ar')});
   $('plus').addEventListener('click',function(){if(qty<50){qty++;render(true)}});
   $('minus').addEventListener('click',function(){if(qty>1){qty--;render(true)}});
-  document.querySelectorAll('input[name="region"]').forEach(function(r){r.addEventListener('change',function(){render(true)})});
+  document.querySelectorAll('input[name="region"],input[name="paym"]').forEach(function(r){r.addEventListener('change',function(){render(true)})});
   $('orderForm').addEventListener('submit',function(e){
     e.preventDefault();
     var M=T[lang].msg, bh=region()==='bh', sub=qty*PRICE;
@@ -583,7 +610,7 @@ document.addEventListener('click',function(e){var a=e.target.closest&&e.target.c
     if(n)lines.push('• '+M[7]+n);
     if(a)lines.push('• '+(bh?M[8]:M[9])+': '+a);
     if(d)lines.push('• '+M[10]+d);
-    lines.push('• '+M[11]+(bh?M[12]:M[13]));
+    lines.push('• '+M[11]+(cod()?T[lang].codMsg+fmt(sub+SHIP_BH-DEP)+')':(bh?M[12]:M[13])));
     var link=document.createElement('a');link.href='https://wa.me/'+WA+'?text='+encodeURIComponent(lines.join('\n'));link.target='_blank';link.rel='noopener';
     document.body.appendChild(link);link.click();link.remove();
     toast(T[lang].toast);
